@@ -6,7 +6,7 @@ const app = express(); // Asegúrate de definir app antes de usarlo
 
 // Habilitar CORS
 app.use(cors({
-    origin: "https://sianwebsiteback.onrender.com",
+    origin: ["http://localhost:4200","https://sianwebsiteback.onrender.com"],
     methods: "GET,POST,PUT,DELETE",
     allowedHeaders: "Content-Type,Authorization"
 }));
