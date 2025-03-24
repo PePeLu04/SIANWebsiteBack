@@ -1,12 +1,22 @@
-console.log("Running server...")
+console.log("Running server...");
+
 const express = require("express");
 const cors = require("cors");
+const admin = require("firebase-admin");
 
-const app = express(); // Asegúrate de definir app antes de usarlo
+// Inicializa Firebase Admin SDK
+const serviceAccount = require("./sianwebsite-firebase-adminsdk-fbsvc-a0e15a8d2f.json"); // Asegúrate de que esta ruta sea correcta
+
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+});
+
+const db = admin.firestore();
+const app = express();
 
 // Habilitar CORS
 app.use(cors({
-    origin: ["http://localhost:4200","https://sianwebsiteback.onrender.com"],
+    origin: ["http://localhost:4200", "https://sianwebsiteback.onrender.com"],
     methods: "GET,POST,PUT,DELETE",
     allowedHeaders: "Content-Type,Authorization"
 }));
@@ -19,8 +29,30 @@ app.get("/", (req, res) => {
     res.send("¡Servidor funcionando correctamente!");
 });
 
+// Ruta para buscar artículos en Firestore
+app.get("/Articulo/buscar/:query", async (req, res) => {
+    const query = req.params.query;
+
+    try {
+        const snapshot = await db.collection("sian") // Asegúrate de que "sian" es el nombre correcto de la colección
+            .where("Articulo", ">=", query)
+            .where("Articulo", "<=", query + "\uf8ff")
+            .get();
+
+        if (snapshot.empty) {
+            return res.status(404).json({ error: "No se encontraron resultados" });
+        }
+
+        const productos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        res.status(200).json(productos);
+    } catch (error) {
+        console.error("Error en la búsqueda:", error);
+        res.status(500).json({ error: "Error en la búsqueda", details: error.message });
+    }
+});
+
 // Escuchar en un puerto dinámico (Render usa process.env.PORT)
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`Servidor corriendo en el puerto ${PORT}`);
+    console.log(`🔥 Servidor corriendo en el puerto ${PORT}`);
 });
