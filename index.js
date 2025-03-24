@@ -53,7 +53,6 @@ app.get("/Articulo/buscar/:query", async (req, res) => {
     }
 });
 
-// Escuchar en un puerto dinámico (Render usa process.env.PORT)
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`🔥 Servidor corriendo en el puerto ${PORT}`);
