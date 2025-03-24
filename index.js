@@ -31,19 +31,21 @@ app.get("/", (req, res) => {
 
 // Ruta para buscar artículos en Firestore
 app.get("/Articulo/buscar/:query", async (req, res) => {
-    const query = req.params.query;
+    const query = req.params.query.toLowerCase(); // Convertir a minúsculas
 
     try {
-        const snapshot = await db.collection("sian") // Asegúrate de que "sian" es el nombre correcto de la colección
-            .where("Articulo", ">=", query)
-            .where("Articulo", "<=", query + "\uf8ff")
-            .get();
+        const snapshot = await db.collection("sian").get();
+        const productos = snapshot.docs
+            .map(doc => ({ id: doc.id, ...doc.data() }))
+            .filter(item =>
+                item.Articulo &&
+                item.Articulo.toLowerCase().includes(query) // Búsqueda parcial
+            );
 
-        if (snapshot.empty) {
+        if (productos.length === 0) {
             return res.status(404).json({ error: "No se encontraron resultados" });
         }
 
-        const productos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         res.status(200).json(productos);
     } catch (error) {
         console.error("Error en la búsqueda:", error);
