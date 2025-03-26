@@ -8,7 +8,7 @@ const admin = require("firebase-admin");
 const serviceAccount = JSON.parse(process.env.FIREBASE_CONFIG); // Asegúrate de que esta ruta sea correcta
 
 admin.initializeApp({
-    credential: admin.credential.applicationDefault(),
+    credential: admin.credential.cert(serviceAccount),
 });
 
 const db = admin.firestore();
@@ -53,7 +53,7 @@ app.get("/Articulo/buscar/:query", async (req, res) => {
     }
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3306;
 app.listen(PORT, () => {
     console.log(`🔥 Servidor corriendo en el puerto ${PORT}`);
 });
