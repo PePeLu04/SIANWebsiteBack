@@ -8,7 +8,7 @@ const admin = require("firebase-admin");
 const serviceAccount = JSON.parse(process.env.FIREBASE_CONFIG); // Asegúrate de que esta ruta sea correcta
 
 admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
+    credential: admin.credential.applicationDefault(),
 });
 
 const db = admin.firestore();
