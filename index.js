@@ -3,7 +3,7 @@ console.log("Running server...");
 const express = require("express");
 const cors = require("cors");
 const admin = require("firebase-admin");
-var serviceAccount = require(sianwebsite-firebase-adminsdk-fbsvc-a0e15a8d2f.json);
+const serviceAccount = require("sianwebsite-firebase-adminsdk-fbsvc-a0e15a8d2f.json");
 
 // Inicializa Firebase Admin SDK // Asegúrate de que esta ruta sea correcta
 
