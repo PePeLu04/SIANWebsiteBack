@@ -5,7 +5,7 @@ const cors = require("cors");
 const admin = require("firebase-admin");
 
 // Inicializa Firebase Admin SDK
-const serviceAccount = JSON.parse(process.env.FIREBASE_CONFIG.replace(/\\n/g, '\n')); // Asegúrate de que esta ruta sea correcta
+const serviceAccount = JSON.parse(process.env.FIREBASE_CONFIG); // Asegúrate de que esta ruta sea correcta
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
