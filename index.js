@@ -8,8 +8,7 @@ if (!process.env.FIREBASE_CONFIG) {
 }
 
 // Convertir la cadena JSON en un objeto
-const serviceAccount = JSON.parse(process.env.FIREBASE_CONFIG.replace(/\n/g, '\\n'));
-
+const serviceAccount = require('./sianwebsite-firebase-adminsdk-fbsvc-a0e15a8d2f.json');
 
 // Inicializa Firebase Admin SDK // Asegúrate de que esta ruta sea correcta
 
