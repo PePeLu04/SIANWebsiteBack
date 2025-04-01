@@ -14,7 +14,8 @@ const serviceAccount = require('./sianwebsite-firebase-adminsdk-fbsvc-a0e15a8d2f
 
 if (!admin.apps.length) {
     admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount)
+        credential: admin.credential.cert(serviceAccount),
+        databaseURL: 'https://sianwebsite.firebaseio.com',
     });
 }
 const db = admin.firestore();
