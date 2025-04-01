@@ -3,7 +3,13 @@ console.log("Running server...");
 const express = require("express");
 const cors = require("cors");
 const admin = require("firebase-admin");
-const serviceAccount = require(process.env.FIREBASE_CONFIG);
+if (!process.env.FIREBASE_CONFIG) {
+    throw new Error("❌ No se encontró la variable de entorno FIREBASE_CONFIG");
+}
+
+// Convertir la cadena JSON en un objeto
+const serviceAccount = JSON.parse(process.env.FIREBASE_CONFIG.replace(/\n/g, '\\n'));
+
 
 // Inicializa Firebase Admin SDK // Asegúrate de que esta ruta sea correcta
 
