@@ -3,21 +3,13 @@ console.log("Running server...");
 const express = require("express");
 const cors = require("cors");
 const admin = require("firebase-admin");
-if (!process.env.FIREBASE_CONFIG) {
-    throw new Error("❌ No se encontró la variable de entorno FIREBASE_CONFIG");
-}
 
-// Convertir la cadena JSON en un objeto
-const serviceAccount = require('./sianwebsite-firebase-adminsdk-fbsvc-a0e15a8d2f.json');
+// Inicializa la aplicación de Firebase
+admin.initializeApp({
+    credential: admin.credential.cert(require('./sianwebsite-firebase-adminsdk-fbsvc-a0e15a8d2f.json')),
+    databaseURL: 'https://sianwebsite-default-rtdb.europe-west1.firebasedatabase.app',
+});
 
-// Inicializa Firebase Admin SDK // Asegúrate de que esta ruta sea correcta
-
-if (!admin.apps.length) {
-    admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount),
-        databaseURL: 'https://sianwebsite-default-rtdb.europe-west1.firebasedatabase.app',
-    });
-}
 const db = admin.firestore();
 const app = express();
 
@@ -41,22 +33,23 @@ app.get("/Articulo/buscar/:query", async (req, res) => {
     const query = req.params.query.toLowerCase(); // Convertir a minúsculas
 
     try {
-        const snapshot = await db.collection("sian").get();
-        snapshot.forEach(doc => {
-            console.log(doc.id, "=>", doc.data()); // Verifica qué datos devuelve Firestore
-        });
-        const productos = snapshot.docs
-            .map(doc => ({ id: doc.id, ...doc.data() }))
-            .filter(item =>
-                item.Articulo &&
-                item.Articulo.toLowerCase().includes(query) // Búsqueda parcial
-            );
+        const collectionRef = db.collection("sian");
+        const snapshot = await collectionRef.get();
 
-        if (productos.length === 0) {
+        if (snapshot.empty) {
             return res.status(404).json({ error: "No se encontraron resultados" });
         }
 
-        res.status(200).json(productos);
+        const productos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        const filteredProductos = productos.filter(item =>
+            item.Articulo && item.Articulo.toLowerCase().includes(query)
+        );
+
+        if (filteredProductos.length === 0) {
+            return res.status(404).json({ error: "No se encontraron resultados" });
+        }
+
+        res.status(200).json(filteredProductos);
     } catch (error) {
         console.error("Error en la búsqueda:", error);
         res.status(500).json({ error: "Error en la búsqueda", details: error.message });
